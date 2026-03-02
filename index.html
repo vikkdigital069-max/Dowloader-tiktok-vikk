@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downloader TikTok Vikk | Official</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS CORE --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            overflow: hidden;
+            color: white;
+        }
+
+        /* Background Video */
+        #bgVideo {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -2;
+            object-fit: cover;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: -1;
+        }
+
+        /* Container & Layout */
+        .container {
+            width: 90%;
+            max-width: 420px;
+            z-index: 10;
+            animation: appScale 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Banner Rectangle (Atas) */
+        .banner-box {
+            width: 100%;
+            height: 100px;
+            border-radius: 25px 25px 0 0;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-bottom: none;
+        }
+
+        .banner-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.5);
+        }
+
+        .banner-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 900;
+            letter-spacing: 4px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            color: #25f4ee;
+            text-shadow: 0 0 15px rgba(37, 244, 238, 0.6);
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Glassmorphism Card */
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 0 0 30px 30px;
+            padding: 40px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            margin-bottom: 5px;
+            background: linear-gradient(45deg, #fe2c55, #25f4ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+        }
+
+        .subtitle {
+            font-size: 0.7rem;
+            opacity: 0.5;
+            margin-bottom: 30px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        /* Interaction Group */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input {
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #25f4ee;
+            box-shadow: 0 0 15px rgba(37, 244, 238, 0.2);
+        }
+
+        .btn-main {
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(45deg, #fe2c55, #6e00ff);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.4s;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.1);
+            box-shadow: 0 10px 20px rgba(254, 44, 85, 0.4);
+        }
+
+        /* Result Section */
+        #resultPanel {
+            display: none;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            animation: slideUp 0.5s ease;
+        }
+
+        .thumb {
+            width: 100px;
+            height: 100px;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 2px solid #fe2c55;
+            margin: 0 auto 15px;
+            display: block;
+        }
+
+        .dl-instan {
+            background: #25f4ee !important;
+            color: #000 !important;
+            width: 100%;
+        }
+
+        /* Branding Footer */
+        .socials {
+            margin-top: 35px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .social-icon {
+            font-size: 2rem;
+            color: rgba(255,255,255,0.7);
+            transition: 0.3s;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-8px) scale(1.1);
+            color: #fff;
+        }
+
+        .tiktok:hover { color: #fe2c55; }
+        .tele:hover { color: #0088cc; }
+
+        /* Animations & Loader */
+        .loader { display: none; margin: 20px 0; }
+        .spinner {
+            width: 35px;
+            height: 35px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-left-color: #25f4ee;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes appScale { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <video autoplay muted loop id="bgVideo">
+        <source src="bg.mp4" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+
+    <div class="container">
+        <div class="banner-box">
+            <video autoplay muted loop class="banner-video">
+                <source src="banner.mp4" type="video/mp4">
+            </video>
+            <div class="banner-text">Vikk Digital Studio</div>
+        </div>
+
+        <div class="card">
+            <h1>Downloader TikTok Vikk</h1>
+            <p class="subtitle">Premium • No Watermark • Instan</p>
+
+            <div class="input-group">
+                <input type="text" id="urlField" placeholder="Masukkan link video TikTok...">
+                <button class="btn-main" onclick="analyzeVideo()" id="btnAction">
+                    <i class="fas fa-bolt"></i> ANALISIS VIDEO
+                </button>
+            </div>
+
+            <div id="loader" class="loader">
+                <div class="spinner"></div>
+                <p style="font-size: 0.7rem; color: #25f4ee; margin-top: 10px; letter-spacing: 2px;">FETCHING SERVER...</p>
+            </div>
+
+            <div id="resultPanel">
+                <img id="vidPreview" src="" class="thumb">
+                <p id="vidAuthor" style="font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; color: #25f4ee;"></p>
+                <a id="downloadLink" href="#" class="btn-main dl-instan">
+                    <i class="fas fa-download"></i> DOWNLOAD SEKARANG
+                </a>
+            </div>
+        </div>
+
+        <div class="socials">
+            <a href="https://www.tiktok.com/@vikk.digital.store.id" target="_blank" class="social-icon tiktok">
+                <i class="fab fa-tiktok"></i>
+            </a>
+            <a href="https://t.me/vikkdigitalstore" target="_blank" class="social-icon tele">
+                <i class="fab fa-telegram-plane"></i>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        async function analyzeVideo() {
+            const inputUrl = document.getElementById('urlField').value;
+            const btn = document.getElementById('btnAction');
+            const loader = document.getElementById('loader');
+            const result = document.getElementById('resultPanel');
+
+            if (!inputUrl) {
+                alert("Tolong tempel link TikTok dulu!");
+                return;
+            }
+
+            // UI Progress
+            btn.style.display = 'none';
+            result.style.display = 'none';
+            loader.style.display = 'block';
+
+            try {
+                // MENGGUNAKAN API TIKWM (GRATIS & TERCEPAT)
+                const apiResponse = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(inputUrl)}`);
+                const dataJson = await apiResponse.json();
+
+                if (dataJson.code === 0) {
+                    const videoInfo = dataJson.data;
+                    document.getElementById('vidPreview').src = videoInfo.cover;
+                    document.getElementById('vidAuthor').innerText = "@" + videoInfo.author.unique_id;
+                    
+                    // SISTEM INSTAN DOWNLOAD
+                    // Mengarahkan tombol langsung ke URL file video HD
+                    const dlBtn = document.getElementById('downloadLink');
+                    const directUrl = videoInfo.play + "&hd=1"; // Menambah parameter HD
+                    
+                    dlBtn.setAttribute('href', directUrl);
+                    // 'download' attribute memicu browser untuk memunculkan notifikasi simpan
+                    dlBtn.setAttribute('download', `Vikk_TikTok_${videoInfo.id}.mp4`);
+
+                    result.style.display = 'block';
+                } else {
+                    alert("Gagal memproses. Link mungkin salah atau video diprivasi.");
+                }
+            } catch (err) {
+                alert("Kesalahan koneksi ke server API.");
+            } finally {
+                loader.style.display = 'none';
+                btn.style.display = 'flex';
+            }
+        }
+    </script>
+</body>
+</html>
